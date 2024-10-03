@@ -14,6 +14,7 @@
 
 - Daily Task (comming soon)
 
+- Multi Account & Proxy
 
 
 **INSTRUCTION:**
