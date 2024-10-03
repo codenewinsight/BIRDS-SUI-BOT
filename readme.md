@@ -1,6 +1,6 @@
 ### BIRDS Telegram Auto BOT SCRIPT
 
-**Link COUB:** [Click](https://t.me/birdx2_bot/birdx?startapp=1416732111)
+**Link BIRDS:** [Click](https://t.me/birdx2_bot/birdx?startapp=1416732111)
 
 **Github download:** [LINK](https://github.com/codenewinsight/BIRDS-SUI-BOT)
 
