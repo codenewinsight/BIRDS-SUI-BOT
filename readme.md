@@ -4,15 +4,15 @@
 
 **Github download:** [LINK](https://github.com/codenewinsight/BIRDS-SUI-BOT)
 
-✔️ Auto Catch Worm
+- Auto Catch Worm
 
-✔️ Auto Crack Eggs
+- Auto Crack Eggs
 
-✔️ Auto Upgrade
+- Auto Upgrade
 
-✔️ Auto Perform Task
+- Auto Perform Task
 
-✔️ Daily Task (comming soon)
+- Daily Task (comming soon)
 
 
 
