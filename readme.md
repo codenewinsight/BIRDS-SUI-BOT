@@ -44,4 +44,4 @@ Run the tool with the command:
 
 Join my Telegram: [LINK](https://t.me/scriptsharing)
 
-Sourcecode/dancayairdrop
+Sourcecode:dancayairdrop
