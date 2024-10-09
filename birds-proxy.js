@@ -11,7 +11,7 @@ class BirdX {
         this.headers = {
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "en-US;q=1.0,en;q=0.9,fr-FR;q=0.8,fr;q=0.7,vi;q=0.6",
+            "Accept-Language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "Content-Type": "application/json",
             "Origin": "https://birdx.birds.dog",
             "Referer": "https://birdx.birds.dog/",
@@ -41,10 +41,10 @@ class BirdX {
             if (response.status === 200) {
                 return response.data.ip;
             } else {
-                throw new Error(`Check Proxy API Failed. Status code: ${response.status}`);
+                throw new Error(`Check Proxy IP Failed. Status code: ${response.status}`);
             }
         } catch (error) {
-            throw new Error(`Check Proxy API Failed. Error: ${error.message}`);
+            throw new Error(`Check Proxy IP Error : ${error.message}`);
         }
     }
 
@@ -78,7 +78,7 @@ class BirdX {
     }
 
     async callAPI(telegramauth, proxy) {
-        const url = "https://birdx-api.birds.dog/user";
+        const url = "https://birdx-api2.birds.dog/user";
         const headers = { 
             ...this.headers, 
             "Telegramauth": `tma ${telegramauth}`
@@ -101,7 +101,7 @@ class BirdX {
                 throw new Error("New Account");
             }
         } catch (error) {
-            this.log(`Login Failed, Create Account...`, 'warning');
+            this.log(`Login Failed, Register new account...`, 'warning');
             
             try {
                 const postResponse = await axios.post(url, payload, { headers, httpsAgent: proxyAgent });
@@ -110,14 +110,14 @@ class BirdX {
                     this.log(`Balance: ${postResponse.data.balance}`, 'custom');
                     return postResponse.data;
                 } else {
-                    throw new Error("Create Account Failed");
+                    throw new Error("Register Account Failed");
                 }
             } catch (postError) {
-                this.log(`Failed: ${postError.message}`, 'error');
+                this.log(`Error: ${postError.message}`, 'error');
             }
         }
 
-        this.log("Login Failed > Next Account", 'error');
+        this.log("Login Failed >> Skip >> Next Account", 'error');
         return null;
     }
 
@@ -135,7 +135,7 @@ class BirdX {
             const statusData = statusResponse.data.data;
 
             if (statusData.status === "MINT_OPEN") {
-                this.log("Worm found.....", 'info');
+                this.log("Found Worm ......", 'info');
                 
                 const mintResponse = await axios.post(mintUrl, {}, { headers, httpsAgent: proxyAgent });
                 const mintData = mintResponse.data.data;
@@ -144,17 +144,17 @@ class BirdX {
                 if (mintData && mintData.status === "WAITING") {
                     const nextMintTime = DateTime.fromISO(mintData.nextMintTime);
                     const formattedNextMintTime = nextMintTime.toLocaleString(DateTime.DATETIME_FULL);
-                    this.log(`Next worm catch time: ${formattedNextMintTime}`, 'info');
+                    this.log(`Next worm appear time: ${formattedNextMintTime}`, 'info');
                 }
             } else if (statusData.status === "WAITING") {
                 const nextMintTime = DateTime.fromISO(statusData.nextMintTime);
                 const formattedNextMintTime = nextMintTime.toLocaleString(DateTime.DATETIME_FULL);
-                this.log(`No Worm found, Next worm catch time: ${formattedNextMintTime}`, 'warning');
+                this.log(`Worm not found. Next worm appear time : ${formattedNextMintTime}`, 'warning');
             } else {
                 this.log(`Status: ${statusData.status}`, 'warning');
             }
         } catch (error) {
-            this.log(`Failed: ${error.message}`, 'error');
+            this.log(`Error: ${error.message}`, 'error');
         }
     }
 
@@ -168,11 +168,11 @@ class BirdX {
         try {
             const joinResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/join", { headers, httpsAgent: proxyAgent });
             let { turn } = joinResponse.data;
-            this.log(`Start cracking egg: Available ${turn} turns`, 'info');
+            this.log(`Start crack Eggs: Available ${turn} Eggs`, 'info');
 
             const turnResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/turn", { headers, httpsAgent: proxyAgent });
             turn = turnResponse.data.turn;
-            this.log(`Current Turn: ${turn}`, 'info');
+            this.log(`Current Eggs No.${turn}`, 'info');
 
             let totalReward = 0;
 
@@ -181,7 +181,7 @@ class BirdX {
                 const { result } = playResponse.data;
                 turn = playResponse.data.turn;
                 totalReward += result;
-                this.log(`Remain ${turn} cracking turn | Reward ${result}`, 'custom');
+                this.log(`Remain ${turn} Eggs | Reward ${result}`, 'custom');
             }
 
             const claimResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/claim", { headers, httpsAgent: proxyAgent });
@@ -192,11 +192,11 @@ class BirdX {
                 this.log("Claim Failed", 'error');
             }
         } catch (error) {
-            this.log(`Egg minigame Error: ${error.message}`, 'error');
+            this.log(`Egg minigame error: ${error.message}`, 'error');
         }
     }
 
-    async upgrade(telegramauth, balance, proxy) {
+    async UpgradeEggLevel(telegramauth, balance, proxy) {
         const headers = { 
             ...this.headers, 
             "Telegramauth": `tma ${telegramauth}`
@@ -215,7 +215,7 @@ class BirdX {
                 if (currentTime > upgradeCompletionTime) {
                     const confirmResponse = await axios.post("https://birdx-api2.birds.dog/minigame/incubate/confirm-upgraded", {}, { headers, httpsAgent: proxyAgent });
                     if (confirmResponse.data === true) {
-                        this.log("Upgrade Success", 'success');
+                        this.log("Upgrade Completed", 'success');
                         const updatedInfoResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/info", { headers, httpsAgent: proxyAgent });
                         incubationInfo = updatedInfoResponse.data;
                     } else {
@@ -223,7 +223,7 @@ class BirdX {
                     }
                 } else {
                     const remainingTime = Math.ceil((upgradeCompletionTime - currentTime) / (60 * 1000));
-                    this.log(`Upgrade Cooldown. Remain time: ${remainingTime} minutes`, 'info');
+                    this.log(`Upgrade in Cooldown. Remain: ${remainingTime} Minutes`, 'info');
                     return;
                 }
             }
@@ -232,10 +232,10 @@ class BirdX {
                 if (balance >= incubationInfo.nextLevel.birds) {
                     await this.upgradeEgg(headers, proxyAgent);
                 } else {
-                    this.log(`Not enough $BIRDS to upgrade. Need ${incubationInfo.nextLevel.birds} $BIRDS`, 'warning');
+                    this.log(`Not enough Balance. Need more ${incubationInfo.nextLevel.birds} $birds`, 'warning');
                 }
             } else if (incubationInfo.status === "confirmed") {
-                this.log("Reached MAX level", 'info');
+                this.log("Reached Max Level", 'info');
             }
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data === 'Start incubating your egg now') {
@@ -253,7 +253,7 @@ class BirdX {
             const upgradeInfo = upgradeResponse.data;
             const upgradeCompletionTime = upgradeInfo.upgradedAt + (upgradeInfo.duration * 60 * 60 * 1000);
             const completionDateTime = new Date(upgradeCompletionTime);
-            this.log(`Start upgrading to level ${upgradeInfo.level}. Complete time: ${completionDateTime.toLocaleString()}`, 'success');
+            this.log(`Start Upgrade to level ${upgradeInfo.level}. Complete time: ${completionDateTime.toLocaleString()}`, 'success');
         } catch (error) {
             this.log(`Upgrade Failed: ${error.message}`, 'error');
         }
@@ -267,10 +267,10 @@ class BirdX {
         const proxyAgent = new HttpsProxyAgent(proxy);
 
         try {
-            const projectResponse = await axios.get("https://birdx-api.birds.dog/project", { headers, httpsAgent: proxyAgent });
+            const projectResponse = await axios.get("https://birdx-api2.birds.dog/project", { headers, httpsAgent: proxyAgent });
             const allTasks = projectResponse.data.flatMap(project => project.tasks);
             
-            const userTasksResponse = await axios.get("https://birdx-api.birds.dog/user-join-task", { headers, httpsAgent: proxyAgent });
+            const userTasksResponse = await axios.get("https://birdx-api2.birds.dog/user-join-task", { headers, httpsAgent: proxyAgent });
             const completedTaskIds = userTasksResponse.data.map(task => task.taskId);
 
             const incompleteTasks = allTasks.filter(task => !completedTaskIds.includes(task._id));
@@ -284,24 +284,24 @@ class BirdX {
                         point: task.point
                     };
 
-                    const joinTaskResponse = await axios.post("https://birdx-api.birds.dog/project/join-task", payload, { headers, httpsAgent: proxyAgent });
+                    const joinTaskResponse = await axios.post("https://birdx-api2.birds.dog/project/join-task", payload, { headers, httpsAgent: proxyAgent });
                     
                     if (joinTaskResponse.data.msg === "Successfully") {
-                        this.log(`Task - ${task.title} - SUCCESS | Reward: ${task.point}`, 'success');
+                        this.log(`Task ${task.title} Success | Reward: ${task.point}`, 'success');
                     } else {
-                        this.log(`Task - ${task.title} - FAILED`, 'error');
+                        this.log(`Task ${task.title} Faied`, 'error');
                     }
                 } catch (error) {
-                    // this.log(`Lỗi khi thực hiện nhiệm vụ ${task.title}: ${error.message}`, 'error');
+                    // this.log(`Task Error ${task.title}: ${error.message}`, 'error');
                 }
 
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
             if (incompleteTasks.length === 0) {
-                this.log("Completed ALL task", 'info');
+                this.log("All Task Completed", 'info');
             }
         } catch (error) {
-            this.log(` Performing tasks Error: ${error.message}`, 'error');
+            this.log(`Complete Task Failed: ${error.message}`, 'error');
         }
     }
 
@@ -323,11 +323,11 @@ class BirdX {
             .split('\n')
             .filter(Boolean);
 
-        const upGradet = await this.askQuestion('Turn-on Auto Upgrade? (y/n): ');
-        const askUpgrade = upGradet.toLowerCase() === 'y';
+        const upgradet = await this.askQuestion('Perform Auto Upgrade Eggs? (y/n): ');
+        const askupgradet = upgradet.toLowerCase() === 'y';
 
-        const nhiemvu = await this.askQuestion('Turn-on Auto Complete Task? (y/n): ');
-        const hoinhiemvu = nhiemvu.toLowerCase() === 'y';
+        const dotask = await this.askQuestion('Perform Auto Complete Task? (y/n): ');
+        const askdotask = dotask.toLowerCase() === 'y';
 
         while (true) {
             for (let i = 0; i < data.length; i++) {
@@ -341,7 +341,7 @@ class BirdX {
                 try {
                     proxyIP = await this.checkProxyIP(proxy);
                 } catch (error) {
-                    this.log(`Check Proxy IP Failed: ${error.message}`, 'warning');
+                    this.log(`Check proxy IP Failed: ${error.message}`, 'warning');
                     continue;
                 }
 
@@ -352,22 +352,22 @@ class BirdX {
                     const balance = apiResult.balance;
                     await this.callWormMintAPI(telegramauth, proxy);
                     await this.playEggMinigame(telegramauth, proxy);
-                    if (askUpgrade) {
-                        this.log(`Start Check and upgrade Eggs...`, 'info');
-                        await this.upgrade(telegramauth, balance, proxy);
+                    if (askupgradet) {
+                        this.log(`Start Check and Upgrade Egg...`, 'info');
+                        await this.UpgradeEggLevel(telegramauth, balance, proxy);
                     }
-                    if (hoinhiemvu) {
-                        this.log(`Start performing Task...`, 'info');
+                    if (askdotask) {
+                        this.log(`Start Perform Task...`, 'info');
                         await this.performTasks(telegramauth, proxy);
                     }
                 } else {
-                    this.log(`Account${userId} API Call Failed. Skip.`, 'error');
+                    this.log(`API call Failed for account ${userId} >>> Skip.`, 'error');
                 }
 
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
 
-            await this.countdown(1440 * 60);
+            await this.countdown(60 * 60);
         }
     }
 }
