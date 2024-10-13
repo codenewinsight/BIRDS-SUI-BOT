@@ -78,7 +78,7 @@ class BirdX {
     }
 
     async callAPI(telegramauth, proxy) {
-        const url = "https://birdx-api2.birds.dog/user";
+        const url = "https://api.birds.dog/user";
         const headers = { 
             ...this.headers, 
             "Telegramauth": `tma ${telegramauth}`
@@ -166,25 +166,25 @@ class BirdX {
         const proxyAgent = new HttpsProxyAgent(proxy);
 
         try {
-            const joinResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/join", { headers, httpsAgent: proxyAgent });
+            const joinResponse = await axios.get("https://api.birds.dog/minigame/egg/join", { headers, httpsAgent: proxyAgent });
             let { turn } = joinResponse.data;
             this.log(`Start crack Eggs: Available ${turn} Eggs`, 'info');
 
-            const turnResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/turn", { headers, httpsAgent: proxyAgent });
+            const turnResponse = await axios.get("https://api.birds.dog/minigame/egg/turn", { headers, httpsAgent: proxyAgent });
             turn = turnResponse.data.turn;
             this.log(`Current Eggs No.${turn}`, 'info');
 
             let totalReward = 0;
 
             while (turn > 0) {
-                const playResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/play", { headers, httpsAgent: proxyAgent });
+                const playResponse = await axios.get("https://api.birds.dog/minigame/egg/play", { headers, httpsAgent: proxyAgent });
                 const { result } = playResponse.data;
                 turn = playResponse.data.turn;
                 totalReward += result;
                 this.log(`Remain ${turn} Eggs | Reward ${result}`, 'custom');
             }
 
-            const claimResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/claim", { headers, httpsAgent: proxyAgent });
+            const claimResponse = await axios.get("https://api.birds.dog/minigame/egg/claim", { headers, httpsAgent: proxyAgent });
             if (claimResponse.data === true) {
                 this.log("Claim Success!", 'success');
                 this.log(`Total Reward: ${totalReward}`, 'custom');
@@ -204,7 +204,7 @@ class BirdX {
         const proxyAgent = new HttpsProxyAgent(proxy);
     
         try {
-            const infoResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/info", { headers, httpsAgent: proxyAgent });
+            const infoResponse = await axios.get("https://api.birds.dog/minigame/incubate/info", { headers, httpsAgent: proxyAgent });
             let incubationInfo = infoResponse.data;
             this.log(`Egg Level: ${incubationInfo.level}`, 'info');
     
@@ -213,10 +213,10 @@ class BirdX {
     
             if (incubationInfo.status === "processing") {
                 if (currentTime > upgradeCompletionTime) {
-                    const confirmResponse = await axios.post("https://birdx-api2.birds.dog/minigame/incubate/confirm-upgraded", {}, { headers, httpsAgent: proxyAgent });
+                    const confirmResponse = await axios.post("https://api.birds.dog/minigame/incubate/confirm-upgraded", {}, { headers, httpsAgent: proxyAgent });
                     if (confirmResponse.data === true) {
                         this.log("Upgrade Completed", 'success');
-                        const updatedInfoResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/info", { headers, httpsAgent: proxyAgent });
+                        const updatedInfoResponse = await axios.get("https://api.birds.dog/minigame/incubate/info", { headers, httpsAgent: proxyAgent });
                         incubationInfo = updatedInfoResponse.data;
                     } else {
                         this.log("Upgrade Failed", 'error');
@@ -249,7 +249,7 @@ class BirdX {
     
     async upgradeEgg(headers, proxyAgent) {
         try {
-            const upgradeResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/upgrade", { headers, httpsAgent: proxyAgent });
+            const upgradeResponse = await axios.get("https://api.birds.dog/minigame/incubate/upgrade", { headers, httpsAgent: proxyAgent });
             const upgradeInfo = upgradeResponse.data;
             const upgradeCompletionTime = upgradeInfo.upgradedAt + (upgradeInfo.duration * 60 * 60 * 1000);
             const completionDateTime = new Date(upgradeCompletionTime);
@@ -267,10 +267,10 @@ class BirdX {
         const proxyAgent = new HttpsProxyAgent(proxy);
 
         try {
-            const projectResponse = await axios.get("https://birdx-api2.birds.dog/project", { headers, httpsAgent: proxyAgent });
+            const projectResponse = await axios.get("https://api.birds.dog/project", { headers, httpsAgent: proxyAgent });
             const allTasks = projectResponse.data.flatMap(project => project.tasks);
             
-            const userTasksResponse = await axios.get("https://birdx-api2.birds.dog/user-join-task", { headers, httpsAgent: proxyAgent });
+            const userTasksResponse = await axios.get("https://api.birds.dog/user-join-task", { headers, httpsAgent: proxyAgent });
             const completedTaskIds = userTasksResponse.data.map(task => task.taskId);
 
             const incompleteTasks = allTasks.filter(task => !completedTaskIds.includes(task._id));
@@ -284,7 +284,7 @@ class BirdX {
                         point: task.point
                     };
 
-                    const joinTaskResponse = await axios.post("https://birdx-api2.birds.dog/project/join-task", payload, { headers, httpsAgent: proxyAgent });
+                    const joinTaskResponse = await axios.post("https://api.birds.dog/project/join-task", payload, { headers, httpsAgent: proxyAgent });
                     
                     if (joinTaskResponse.data.msg === "Successfully") {
                         this.log(`Task ${task.title} Success | Reward: ${task.point}`, 'success');
