@@ -54,7 +54,7 @@ class BirdX {
     }
 
     async callAPI(telegramauth) {
-        const url = "https://birdx-api2.birds.dog/user";
+        const url = "https://api.birds.dog/user";
         const headers = { 
             ...this.headers, 
             "Telegramauth": `tma ${telegramauth}`
@@ -138,25 +138,25 @@ class BirdX {
         };
 
         try {
-            const joinResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/join", { headers });
+            const joinResponse = await axios.get("https://api.birds.dog/minigame/egg/join", { headers });
             let { turn } = joinResponse.data;
             this.log(`Start crack Eggs : Available: ${turn} eggs`, 'info');
 
-            const turnResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/turn", { headers });
+            const turnResponse = await axios.get("https://api.birds.dog/minigame/egg/turn", { headers });
             turn = turnResponse.data.turn;
             this.log(`Current Eggs: ${turn}`, 'info');
 
             let totalReward = 0;
 
             while (turn > 0) {
-                const playResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/play", { headers });
+                const playResponse = await axios.get("https://api.birds.dog/minigame/egg/play", { headers });
                 const { result } = playResponse.data;
                 turn = playResponse.data.turn;
                 totalReward += result;
                 this.log(`Remain ${turn} Eggs | Reward ${result}`, 'custom');
             }
 
-            const claimResponse = await axios.get("https://birdx-api2.birds.dog/minigame/egg/claim", { headers });
+            const claimResponse = await axios.get("https://api.birds.dog/minigame/egg/claim", { headers });
             if (claimResponse.data === true) {
                 this.log("Claim Success!", 'success');
                 this.log(`Tổng reward: ${totalReward}`, 'custom');
@@ -175,7 +175,7 @@ class BirdX {
         };
     
         try {
-            const infoResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/info", { headers });
+            const infoResponse = await axios.get("https://api.birds.dog/minigame/incubate/info", { headers });
             let incubationInfo = infoResponse.data;
             this.log(`Eggs Level: ${incubationInfo.level}`, 'info');
     
@@ -184,10 +184,10 @@ class BirdX {
     
             if (incubationInfo.status === "processing") {
                 if (currentTime > upgradeCompletionTime) {
-                    const confirmResponse = await axios.post("https://birdx-api2.birds.dog/minigame/incubate/confirm-upgraded", {}, { headers });
+                    const confirmResponse = await axios.post("https://api.birds.dog/minigame/incubate/confirm-upgraded", {}, { headers });
                     if (confirmResponse.data === true) {
                         this.log("Upgrade Success", 'success');
-                        const updatedInfoResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/info", { headers });
+                        const updatedInfoResponse = await axios.get("https://api.birds.dog/minigame/incubate/info", { headers });
                         incubationInfo = updatedInfoResponse.data;
                     } else {
                         this.log("Upgrade Failed", 'error');
@@ -220,7 +220,7 @@ class BirdX {
     
     async upgradeEgg(headers) {
         try {
-            const upgradeResponse = await axios.get("https://birdx-api2.birds.dog/minigame/incubate/upgrade", { headers });
+            const upgradeResponse = await axios.get("https://api.birds.dog/minigame/incubate/upgrade", { headers });
             const upgradeInfo = upgradeResponse.data;
             const upgradeCompletionTime = upgradeInfo.upgradedAt + (upgradeInfo.duration * 60 * 60 * 1000);
             const completionDateTime = new Date(upgradeCompletionTime);
@@ -237,10 +237,10 @@ class BirdX {
         };
 
         try {
-            const projectResponse = await axios.get("https://birdx-api2.birds.dog/project", { headers });
+            const projectResponse = await axios.get("https://api.birds.dog/project", { headers });
             const allTasks = projectResponse.data.flatMap(project => project.tasks);
             
-            const userTasksResponse = await axios.get("https://birdx-api2.birds.dog/user-join-task", { headers });
+            const userTasksResponse = await axios.get("https://api.birds.dog/user-join-task", { headers });
             const completedTaskIds = userTasksResponse.data.map(task => task.taskId);
 
             const incompleteTasks = allTasks.filter(task => !completedTaskIds.includes(task._id));
@@ -254,7 +254,7 @@ class BirdX {
                         point: task.point
                     };
 
-                    const joinTaskResponse = await axios.post("https://birdx-api2.birds.dog/project/join-task", payload, { headers });
+                    const joinTaskResponse = await axios.post("https://api.birds.dog/project/join-task", payload, { headers });
                     
                     if (joinTaskResponse.data.msg === "Successfully") {
                         this.log(`Task ${task.title} Success | Reward: ${task.point}`, 'success');
